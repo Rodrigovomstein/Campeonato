@@ -26,5 +26,4 @@ public class EstadioRequestDto {
 
         @NotNull(message = "O status é obrigatório")
         private Boolean status;
-    }
 }

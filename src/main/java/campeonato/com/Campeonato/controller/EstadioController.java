@@ -1,7 +1,8 @@
 package campeonato.com.Campeonato.controller;
 
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
-import campeonato.com.Campeonato.exception.ClubeExisteException;
+import campeonato.com.Campeonato.exception.EstadioExisteException;
+import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.model.Estadio;
 import campeonato.com.Campeonato.services.EstadioService;
 import jakarta.validation.Valid;
@@ -24,22 +25,25 @@ public class EstadioController {
         @PostMapping
         public ResponseEntity<String> cadastrarEstadio(@RequestBody @Valid EstadioRequestDto estadioRequestDto) {
             try {
-                String mensagem = estadioService.cadastrarEstadio(estadioRequestDTO);
+                String mensagem = estadioService.cadastrarEstadio(estadioRequestDto);
                 return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
-            } catch (ClubeExisteException ex) {
+            }
+            catch (EstadioExisteException ex) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
             }
         }
         @PutMapping("/{id}")
         public ResponseEntity<String> atualizarEstadio(
                 @PathVariable Long id,
-                @RequestBody @Valid EstadioRequestDTO estadioRequestDTO) {
+                @RequestBody @Valid EstadioRequestDto estadioRequestDto) {
             try {
-                String mensagem = estadioService.atualizarEstadio(id, estadioRequestDTO);
+                String mensagem = estadioService.atualizarEstadio(id, estadioRequestDto);
                 return ResponseEntity.ok(mensagem);
-            } catch (EstadioExisteException ex) {
+            }
+            catch (EstadioExisteException ex) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-            } catch (EstadioNaoEncontradoException ex) {
+            }
+            catch (EstadioNaoEncontradoException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             }
         }
@@ -47,9 +51,10 @@ public class EstadioController {
         @DeleteMapping("/{id}")
         public ResponseEntity<String> inativarEstadio(@PathVariable Long id) {
             try {
-                estadioService.inativarClube(id);
+                estadioService.inativarEstadio(id);
                 return ResponseEntity.noContent().build(); // 204, sem body
-            } catch (EstadioNaoEncontradoException ex) {
+            }
+            catch (EstadioNaoEncontradoException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             }
         }
@@ -59,7 +64,8 @@ public class EstadioController {
             try {
                 Estadio estadio = estadioService.buscarEstadioPorId(id);
                 return ResponseEntity.ok(estadio);
-            } catch (EstadioNaoEncontradoException ex) {
+            }
+            catch (EstadioNaoEncontradoException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             }
         }
@@ -69,9 +75,7 @@ public class EstadioController {
                 @RequestParam(required = false) String nome,
                 @RequestParam(required = false) String uf,
                 @RequestParam(required = false) Boolean status,
-                @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
-        {
+                @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
             return estadioService.listarEstadio(nome, uf, status, pageable);
         }
-    }
 }
