@@ -11,6 +11,8 @@ public class PartidaRequestDto {
     @NotBlank(message = "Estádio é obrigatório")
     @Size(min = 2, message = "O nome do estádio deve ter pelo menos 2 caracteres")
     private String estadio;
+    private Long clube1Id;
+    private Long clube2Id;
 
     @NotBlank(message = "UF é obrigatória")
     @Pattern(

@@ -59,8 +59,6 @@ public class PartidaController {
             return ResponseEntity.noContent().build(); // 204, sem body
         } catch (PartidaNaoEncontradaException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            // Se quiser mostrar a mensagem, mude o tipo para ResponseEntity<String>
-            // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
 
