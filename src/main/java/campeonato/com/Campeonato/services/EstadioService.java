@@ -29,6 +29,10 @@ public class EstadioService {
             throw new EstadioExisteException("Já existe um estadio com esse nome nesse estado.");
         }
 
+        if (estadioRequestDto.getNome() == null || estadioRequestDto.getNome().isEmpty()) {
+            throw new RuntimeException("O nome do clube não pode ser vazio.");
+        }
+
         Estadio estadio = new Estadio();
         estadio.setNome(estadioRequestDto.getNome());
         estadio.setUf(estadioRequestDto.getUf());
@@ -62,6 +66,10 @@ public class EstadioService {
     public void inativarEstadio(Long id) {
         Estadio estadio = estadioRepository.findById(id)
                 .orElseThrow(() -> new EstadioNaoEncontradoException("Estadio não encontrado!"));
+
+        if (!estadio.getStatus()) {
+            throw new RuntimeException("Estadio está inativo.");
+        }
 
         if (!Boolean.FALSE.equals(estadio.getStatus())) {
             estadio.setStatus(false);

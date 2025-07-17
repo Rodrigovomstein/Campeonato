@@ -19,23 +19,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/estadio")
 public class EstadioController {
 
-        @Autowired
-        private EstadioService estadioService;
+    @Autowired
+    private EstadioService estadioService;
 
-        @PostMapping
-        public ResponseEntity<String> cadastrarEstadio(@RequestBody @Valid EstadioRequestDto estadioRequestDto) {
-            try {
-                String mensagem = estadioService.cadastrarEstadio(estadioRequestDto);
-                return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
-            }
-            catch (EstadioExisteException ex) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-            }
+    @PostMapping
+    public ResponseEntity<String> cadastrarEstadio(@RequestBody @Valid EstadioRequestDto estadioRequestDto) {
+        try {
+            String mensagem = estadioService.cadastrarEstadio(estadioRequestDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         }
-        @PutMapping("/{id}")
-        public ResponseEntity<String> atualizarEstadio(
-                @PathVariable Long id,
-                @RequestBody @Valid EstadioRequestDto estadioRequestDto) {
+        catch (EstadioExisteException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarEstadio(
+            @PathVariable Long id,
+            @RequestBody @Valid EstadioRequestDto estadioRequestDto) {
             try {
                 String mensagem = estadioService.atualizarEstadio(id, estadioRequestDto);
                 return ResponseEntity.ok(mensagem);
@@ -46,36 +47,37 @@ public class EstadioController {
             catch (EstadioNaoEncontradoException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             }
-        }
+    }
 
-        @DeleteMapping("/{id}")
-        public ResponseEntity<String> inativarEstadio(@PathVariable Long id) {
-            try {
-                estadioService.inativarEstadio(id);
-                return ResponseEntity.noContent().build(); // 204, sem body
-            }
-            catch (EstadioNaoEncontradoException ex) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-            }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> inativarEstadio(@PathVariable Long id) {
+        try {
+            estadioService.inativarEstadio(id);
+            return ResponseEntity.noContent().build(); // 204, sem body
         }
-
-        @GetMapping("/{id}")
-        public ResponseEntity<?> buscarEstadio(@PathVariable Long id) {
-            try {
-                Estadio estadio = estadioService.buscarEstadioPorId(id);
-                return ResponseEntity.ok(estadio);
-            }
-            catch (EstadioNaoEncontradoException ex) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-            }
+        catch (EstadioNaoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
+    }
 
-        @GetMapping
-        public Page<Estadio> listarEstadio(
-                @RequestParam(required = false) String nome,
-                @RequestParam(required = false) String uf,
-                @RequestParam(required = false) Boolean status,
-                @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarEstadio(@PathVariable Long id) {
+        try {
+            Estadio estadio = estadioService.buscarEstadioPorId(id);
+            return ResponseEntity.ok(estadio);
+        }
+        catch (EstadioNaoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping
+    public Page<Estadio> listarEstadio(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String uf,
+            @RequestParam(required = false) Boolean status,
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
+    {
             return estadioService.listarEstadio(nome, uf, status, pageable);
-        }
+    }
 }

@@ -34,10 +34,12 @@ public class ClubeController {
         try {
             String mensagem = clubeService.cadastrarClube(clubeRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
-        } catch (ClubeExisteException ex) {
+        }
+        catch (ClubeExisteException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         }
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarClube(
             @PathVariable Long id,
@@ -45,9 +47,11 @@ public class ClubeController {
         try {
             String mensagem = clubeService.atualizarClube(id, clubeRequestDTO);
             return ResponseEntity.ok(mensagem);
-        } catch (ClubeExisteException ex) {
+        }
+        catch (ClubeExisteException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-        } catch (ClubeNaoEncontradoException ex) {
+        }
+        catch (ClubeNaoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
@@ -57,7 +61,8 @@ public class ClubeController {
         try {
             clubeService.inativarClube(id);
             return ResponseEntity.noContent().build(); // 204, sem body
-        } catch (ClubeNaoEncontradoException ex) {
+        }
+        catch (ClubeNaoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
@@ -67,7 +72,8 @@ public class ClubeController {
         try {
             Clube clube = clubeService.buscarClubePorId(id);
             return ResponseEntity.ok(clube);
-        } catch (ClubeNaoEncontradoException ex) {
+        }
+        catch (ClubeNaoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
