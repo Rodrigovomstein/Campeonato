@@ -1,14 +1,18 @@
 package campeonato.com.Campeonato.services;
 
+import campeonato.com.Campeonato.Specifications.ClubeSpecifications;
+import campeonato.com.Campeonato.Specifications.EstadioSpecifications;
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
+import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Estadio;
 import campeonato.com.Campeonato.repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -82,31 +86,10 @@ public class EstadioService {
                 new EstadioNaoEncontradoException("Estadio não encontrado!"));
     }
 
-
     public Page<Estadio> listarEstadio(String nome, String uf, Boolean status, Pageable pageable) {
-        List<Estadio> estadio = estadioRepository.findAll();
-
-        if (nome != null) {
-            estadio = estadio.stream()
-                    .filter( c -> c.getNome().toLowerCase().contains(nome.toLowerCase()))
-                    .toList();
-        }
-        if (uf != null) {
-            estadio = estadio.stream()
-                    .filter( c -> c.getUf().equalsIgnoreCase(uf))
-                    .toList();
-        }
-        if (status != null) {
-            estadio = estadio.stream()
-                    .filter( c -> c.getStatus().equals(status))
-                    .toList();
-        }
-
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), estadio.size());
-        List<Estadio> pagina = (start >= estadio.size()) ? List.of() : estadio.subList(start, end);
-
-        return new PageImpl<>(pagina, pageable, estadio.size());
+        Specification<Estadio> spec = EstadioSpecifications.nomeContem(nome)
+                .and(EstadioSpecifications.ufIgual(uf))
+                .and(EstadioSpecifications.statusIgual(status));
+        return estadioRepository.findAll(spec, pageable);
     }
 }

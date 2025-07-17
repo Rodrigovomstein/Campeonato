@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-
+import campeonato.com.Campeonato.Specifications.ClubeSpecifications;
+import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 @Service
@@ -83,30 +83,10 @@ public class ClubeService {
     }
 
     public Page<Clube> listarClubes(String nome, String uf, Boolean status, Pageable pageable) {
-        List<Clube> clubes = clubeRepository.findAll();
-
-        if (nome != null) {
-            clubes = clubes.stream()
-                    .filter(c -> c.getNome().toLowerCase().contains(nome.toLowerCase()))
-                    .toList();
-        }
-        if (uf != null) {
-            clubes = clubes.stream()
-                    .filter(c -> c.getUf().equalsIgnoreCase(uf))
-                    .toList();
-        }
-        if (status != null) {
-            clubes = clubes.stream()
-                    .filter(c -> c.getStatus().equals(status))
-                    .toList();
-        }
-
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), clubes.size());
-        List<Clube> pagina = (start >= clubes.size()) ? List.of() : clubes.subList(start, end);
-
-        return new PageImpl<>(pagina, pageable, clubes.size());
+        Specification<Clube> spec = ClubeSpecifications.nomeContem(nome)
+                .and(ClubeSpecifications.ufIgual(uf))
+                .and(ClubeSpecifications.statusIgual(status));
+        return clubeRepository.findAll(spec, pageable);
     }
 }
 
