@@ -28,4 +28,25 @@ public class PartidaRequestDto {
 
     @NotNull(message = "O status é obrigatório")
     private Boolean status;
+
+    private Integer golsClube1;
+
+    public Integer getGolsClube1() {
+        return golsClube1;
+    }
+
+    public void setGolsClube1(Integer golsClube1) {
+        this.golsClube1 = golsClube1;
+    }
+
+    private Integer golsClube2;
+
+    public Integer getGolsClube2() {
+        return golsClube2;
+    }
+
+    public void setGolsClube2(Integer golsClube2) {
+        this.golsClube2 = golsClube2;
+    }
+
 }

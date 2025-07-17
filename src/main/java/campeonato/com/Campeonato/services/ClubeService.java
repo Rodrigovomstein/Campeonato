@@ -29,6 +29,10 @@ public class ClubeService {
             throw new ClubeExisteException("Já existe um clube com esse nome nesse estado.");
         }
 
+        if (clubeRequestDTO.getNome() == null || clubeRequestDTO.getNome().isEmpty()) {
+            throw new RuntimeException("O nome do clube não pode ser vazio.");
+        }
+
         Clube clube = new Clube();
         clube.setNome(clubeRequestDTO.getNome());
         clube.setUf(clubeRequestDTO.getUf());
@@ -63,6 +67,10 @@ public class ClubeService {
         Clube clube = clubeRepository.findById(id)
                 .orElseThrow(() -> new ClubeNaoEncontradoException("Clube não encontrado!"));
 
+        if (!clube.getStatus()) {
+            throw new RuntimeException("Clube está inativo.");
+        }
+
         if (!Boolean.FALSE.equals(clube.getStatus())) {
             clube.setStatus(false);
             clubeRepository.save(clube);
@@ -73,7 +81,6 @@ public class ClubeService {
         return clubeRepository.findById(id).orElseThrow(() ->
                 new ClubeNaoEncontradoException("Clube não encontrado!"));
     }
-
 
     public Page<Clube> listarClubes(String nome, String uf, Boolean status, Pageable pageable) {
         List<Clube> clubes = clubeRepository.findAll();

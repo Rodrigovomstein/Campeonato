@@ -7,7 +7,7 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Partida;
 import campeonato.com.Campeonato.repository.ClubeRepository;
 import campeonato.com.Campeonato.repository.PartidaRepository;
-import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +31,15 @@ public class PartidaService {
                 .findByEstadioAndUfIgnoreCase(partidaRequestDto.getEstadio(), partidaRequestDto.getUf())
                 .isPresent();
 
+        if (partidaRequestDto.getGolsClube1() < 0) {
+            throw new RuntimeException("Gols do clube 1 não podem ser negativos.");
+        }
+        if (partidaRequestDto.getGolsClube2() < 0) {
+            throw new RuntimeException("Gols do clube 2 não podem ser negativos.");
+        }
+        if (partidaRequestDto.getDataHorario().isAfter(LocalDateTime.now())) {
+            throw new RuntimeException("Data da partida não pode ser no futuro.");
+        }
         if (jaExiste) {
             throw new PartidaExisteException("Já existe essa partida.");
         }
