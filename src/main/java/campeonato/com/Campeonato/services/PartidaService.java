@@ -8,6 +8,8 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Partida;
 import campeonato.com.Campeonato.repository.ClubeRepository;
 import campeonato.com.Campeonato.repository.PartidaRepository;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import io.micrometer.common.KeyValue;
@@ -96,7 +98,7 @@ public class PartidaService {
         return partidaRepository.findById(id)
                 .orElseThrow(() -> new PartidaNaoEncontradaException("Partida não encontrada!"));
     }
-    public Page<Partida> listarPartida(String estadio, String uf, LocalDateTime dataHorario, Boolean status, String clube1Id, String clube2Id, Pageable pageable) {
+    public Page<Partida> listarPartidas(String clube1Id, String clube2Id, String uf, String estadio, LocalDate dataHorario, Boolean status, Pageable pageable){
         Specification<Partida> spec = PartidaSpecifications.estadioContem(estadio)
                 .and(PartidaSpecifications.clube1Igual(clube1Id))
                 .and(PartidaSpecifications.clube2Igual(clube2Id))
@@ -113,4 +115,5 @@ public class PartidaService {
     public void setClubeRepository (ClubeRepository clubeRepository) {
         this.clubeRepository = clubeRepository;
     }
+
 }

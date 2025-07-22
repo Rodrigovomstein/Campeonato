@@ -74,13 +74,14 @@ public class PartidaController {
 
     @GetMapping
     public Page<Partida> listarPartidas(
-            @RequestParam(required = false) String clube1,
-            @RequestParam(required = false) String clube2,
+            @RequestParam(required = false) String clube1Id,
+            @RequestParam(required = false) String clube2Id,
+            @RequestParam(required = false) String uf,
             @RequestParam(required = false) String estadio,
             @RequestParam(required = false) LocalDate dataHorario,
             @RequestParam(required = false) Boolean status,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return partidaService.listarPartidas(clube1, clube2, estadio, dataHorario, status, pageable);
+        return partidaService.listarPartidas(clube1Id, clube2Id, estadio, uf, dataHorario, status, pageable);
     }
 }

@@ -7,18 +7,19 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.repository.ClubeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import campeonato.com.Campeonato.Specifications.ClubeSpecifications;
 import org.springframework.data.jpa.domain.Specification;
-import java.util.List;
+
+
 
 @Service
 public class ClubeService {
 
     @Autowired
     private ClubeRepository clubeRepository;
+
 
     public String cadastrarClube(ClubeRequestDTO clubeRequestDTO) {
         boolean jaExiste = clubeRepository
@@ -88,6 +89,7 @@ public class ClubeService {
                 .and(ClubeSpecifications.statusIgual(status));
         return clubeRepository.findAll(spec, pageable);
     }
+
 }
 
 

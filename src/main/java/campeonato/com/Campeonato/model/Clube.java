@@ -15,7 +15,6 @@ public class Clube {
     private String nome;
     @Column(name="estado")
     private String uf;
-
     @Column(name="data_criacao")
     private LocalDate dataCriacao;
     @Column(name="ativo")

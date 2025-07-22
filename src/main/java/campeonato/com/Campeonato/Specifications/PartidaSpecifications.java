@@ -2,7 +2,7 @@ package campeonato.com.Campeonato.Specifications;
 
 import campeonato.com.Campeonato.model.Partida;
 import org.springframework.data.jpa.domain.Specification;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class PartidaSpecifications {
 
@@ -14,7 +14,7 @@ public class PartidaSpecifications {
         return (root, query, cb) -> status == null ? null : cb.equal(root.get("status"), status);
     }
 
-    public static Specification<Partida> dataHorarioIgual(LocalDateTime dataHorario) {
+    public static Specification<Partida> dataHorarioIgual(LocalDate dataHorario) {
         return (root, query, cb) -> dataHorario == null ? null : cb.equal(root.get("dataHorario"), dataHorario);
     }
 
