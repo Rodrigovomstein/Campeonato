@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ClubeRepository extends JpaRepository<Clube, Long>, JpaSpecificationExecutor<Clube> {
     Optional<Clube> findByNomeAndUfIgnoreCase(String nome, String uf);
+
+    Object buscaAvancada(String flamengo, String rj, Object o);
 }

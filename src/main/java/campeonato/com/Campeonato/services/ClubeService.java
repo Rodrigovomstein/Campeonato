@@ -20,6 +20,10 @@ public class ClubeService {
     @Autowired
     private ClubeRepository clubeRepository;
 
+    public ClubeService(ClubeRepository clubeRepository) {
+
+    }
+
 
     public String cadastrarClube(ClubeRequestDTO clubeRequestDTO) {
         boolean jaExiste = clubeRepository
@@ -68,9 +72,6 @@ public class ClubeService {
         Clube clube = clubeRepository.findById(id)
                 .orElseThrow(() -> new ClubeNaoEncontradoException("Clube não encontrado!"));
 
-        if (!clube.getStatus()) {
-            throw new RuntimeException("Clube está inativo.");
-        }
 
         if (!Boolean.FALSE.equals(clube.getStatus())) {
             clube.setStatus(false);
@@ -90,6 +91,12 @@ public class ClubeService {
         return clubeRepository.findAll(spec, pageable);
     }
 
+    public Object buscarClubesAvancado(String flamengo, String rj, Object o) {
+        Specification<Clube> spec = ClubeSpecifications.nomeContem(flamengo)
+                .and(ClubeSpecifications.ufIgual(rj))
+                .and(ClubeSpecifications.statusIgual(Boolean.TRUE));
+        return clubeRepository.findAll(spec);
+    }
 }
 
 
