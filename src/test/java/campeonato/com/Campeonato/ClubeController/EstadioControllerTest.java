@@ -1,6 +1,5 @@
 package campeonato.com.Campeonato.ClubeController;
 
-import campeonato.com.Campeonato.CampeonatoApplication;
 import campeonato.com.Campeonato.controller.EstadioController;
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
@@ -9,20 +8,22 @@ import campeonato.com.Campeonato.services.EstadioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import campeonato.com.Campeonato.model.Estadio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -126,5 +127,67 @@ class EstadioControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Estádio não encontrado.")));
+    }
+    @Test
+    void inativarEstadio_DeveRetornarNoContent_QuandoSucesso() throws Exception {
+        Long id = 10L;
+        Mockito.doNothing().when(estadioService).inativarEstadio(id);
+
+        mockMvc.perform(delete("/estadio/{id}", id))
+                .andExpect(status().isNoContent());
+    }
+    @Test
+    void inativarEstadio_DeveRetornarNotFound_QuandoNaoEncontrado() throws Exception {
+        Long id = 55L;
+        Mockito.doThrow(new EstadioNaoEncontradoException("Estádio não encontrado"))
+                .when(estadioService).inativarEstadio(id);
+
+        mockMvc.perform(delete("/estadio/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Estádio não encontrado")));
+    }
+    @Test
+    void buscarEstadio_DeveRetornarOk_QuandoEncontrado() throws Exception {
+        Long id = 5L;
+        Estadio estadio = new Estadio();
+        estadio.setId(id);
+        estadio.setNome("Pacaembu");
+        estadio.setUf("SP");
+        estadio.setStatus(true);
+
+        Mockito.when(estadioService.buscarEstadioPorId(id)).thenReturn(estadio);
+
+        mockMvc.perform(get("/estadio/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.nome").value("Pacaembu"))
+                .andExpect(jsonPath("$.uf").value("SP"))
+                .andExpect(jsonPath("$.status").value(true));
+    }
+    @Test
+    void buscarEstadio_DeveRetornarNotFound_QuandoNaoEncontrado() throws Exception {
+        Long id = 99L;
+        Mockito.when(estadioService.buscarEstadioPorId(id))
+                .thenThrow(new EstadioNaoEncontradoException("Estádio não encontrado"));
+
+        mockMvc.perform(get("/estadio/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Estádio não encontrado")));
+    }
+    @Test
+    void listarEstadios_DeveRetornarListaPaginada() throws Exception {
+        Estadio estadio1 = new Estadio(); estadio1.setNome("Morumbi"); estadio1.setUf("SP");
+        Estadio estadio2 = new Estadio(); estadio2.setNome("Mineirão"); estadio2.setUf("MG");
+
+        Mockito.when(estadioService.listarEstadio(any(), any(), any(), any()))
+                .thenReturn(new PageImpl<>(List.of(estadio1, estadio2), PageRequest.of(0, 2), 2));
+
+        mockMvc.perform(get("/estadio") // ajuste para seu endpoint
+                        .param("nome", "")
+                        .param("uf", "")
+                        .param("status", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(2));
     }
 }
