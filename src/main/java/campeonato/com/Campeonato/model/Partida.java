@@ -14,8 +14,8 @@ public class Partida {
 
     private String estadio;
     private String uf;
-    private String clube1Id;
-    private String clube2Id;
+    private Long clube1Id;
+    private Long clube2Id;
 
     @Column(name = "data_e_horario")
     private LocalDateTime dataHorario;

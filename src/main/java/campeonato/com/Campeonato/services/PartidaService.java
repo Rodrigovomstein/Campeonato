@@ -8,11 +8,9 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Partida;
 import campeonato.com.Campeonato.repository.ClubeRepository;
 import campeonato.com.Campeonato.repository.PartidaRepository;
-
+import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import io.micrometer.common.KeyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,8 +56,8 @@ public class PartidaService {
         partida.setUf(partidaRequestDto.getUf());
         partida.setDataHorario(partidaRequestDto.getDataHorario());
         partida.setStatus(partidaRequestDto.getStatus());
-        partida.setClube1Id(String.valueOf(clube1));
-        partida.setClube2Id(String.valueOf(clube2));
+        partida.setClube1Id(clube1.getId());
+        partida.setClube2Id(clube2.getId());
 
         partidaRepository.save(partida);
         return "Partida " + partida.getEstadio() + " cadastrada com sucesso!";
