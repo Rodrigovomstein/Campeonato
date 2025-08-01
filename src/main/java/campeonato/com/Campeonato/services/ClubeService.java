@@ -97,6 +97,7 @@ public class ClubeService {
                 .and(ClubeSpecifications.statusIgual(Boolean.TRUE));
         return clubeRepository.findAll(spec);
     }
+
 }
 
 
