@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/kafka")
 public class KafkaController {
 
-    private final KafkaProducerService producerService;
+    private final KafkaProducerService kafkaProducerService;
 
     @Autowired
     public KafkaController(KafkaProducerService producerService) {
-        this.producerService = producerService;
+        this.kafkaProducerService = producerService;
     }
 
     @PostMapping("/enviar")
     public ResponseEntity<String> enviar(@RequestParam String mensagem) {
-        producerService.enviarMensagem(mensagem);
+        kafkaProducerService.enviarMensagem(mensagem);
         return ResponseEntity.ok("Mensagem enviada!");
     }
 }

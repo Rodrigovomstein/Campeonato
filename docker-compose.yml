@@ -12,7 +12,6 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@campeonato-kafka-1:9093
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://campeonato-kafka-1:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -25,5 +24,15 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: campeonato-kafka-1:9092
+    depends_on:
+      - kafka
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: campeonato-kafdrop-1
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: campeonato-kafka-1:9092
     depends_on:
       - kafka

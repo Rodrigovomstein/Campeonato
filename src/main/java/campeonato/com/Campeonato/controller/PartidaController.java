@@ -5,6 +5,7 @@ import campeonato.com.Campeonato.exception.PartidaExisteException;
 import campeonato.com.Campeonato.exception.PartidaNaoEncontradaException;
 import campeonato.com.Campeonato.model.Partida;
 import campeonato.com.Campeonato.repository.PartidaRepository;
+import campeonato.com.Campeonato.services.KafkaProducerService;
 import campeonato.com.Campeonato.services.PartidaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,14 @@ public class PartidaController {
     @Autowired
     private PartidaRepository partidaRepository;
 
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
+
     @PostMapping
-    public ResponseEntity<String> cadastrarPartida(@RequestBody PartidaRequestDto partidaRequestDto) {
+    public ResponseEntity<?> cadastrarPartida(@RequestBody @Valid PartidaRequestDto partidaRequestDto) {
         try {
             String mensagem = partidaService.cadastrarPartida(partidaRequestDto);
+            kafkaProducerService.enviarCadastroPartida(mensagem);
             return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         } catch (PartidaExisteException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
