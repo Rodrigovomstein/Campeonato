@@ -1,12 +1,14 @@
 package campeonato.com.Campeonato.controller;
 
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
+import campeonato.com.Campeonato.dto.ViaCepDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.model.Estadio;
 import campeonato.com.Campeonato.services.EstadioService;
-import campeonato.com.Campeonato.services.ViaCepService;
+import campeonato.com.Campeonato.services.EstadioViaCepClient;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/estadios")
@@ -24,12 +27,12 @@ public class EstadioController {
     private EstadioService estadioService;
 
     @Autowired
-    private ViaCepService viaCepService;
+    private EstadioViaCepClient estadioViaCepClient;
 
     @PostMapping
     public ResponseEntity<String> cadastrarEstadio(@RequestBody @Valid EstadioRequestDto estadioRequestDto) {
         try {
-            EnderecoResponse endereco = viaCepService.buscarEnderecoPorCep(estadioRequestDto.getCep());
+            ViaCepDto endereco = estadioViaCepClient.buscarEnderecoPorCep(estadioRequestDto.getCep());
             estadioRequestDto.setCep(endereco.getCep());
 
             String mensagem = estadioService.cadastrarEstadio(estadioRequestDto);
@@ -44,23 +47,23 @@ public class EstadioController {
     public ResponseEntity<String> atualizarEstadio(
             @PathVariable Long id,
             @RequestBody @Valid EstadioRequestDto estadioRequestDto) {
-            try {
-                String mensagem = estadioService.atualizarEstadio(id, estadioRequestDto);
-                return ResponseEntity.ok(mensagem);
-            }
-            catch (EstadioExisteException ex) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-            }
-            catch (EstadioNaoEncontradoException ex) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-            }
+        try {
+            String mensagem = estadioService.atualizarEstadio(id, estadioRequestDto);
+            return ResponseEntity.ok(mensagem);
+        }
+        catch (EstadioExisteException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        }
+        catch (EstadioNaoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> inativarEstadio(@PathVariable Long id) {
         try {
             estadioService.inativarEstadio(id);
-            return ResponseEntity.noContent().build(); // 204, sem body
+            return ResponseEntity.noContent().build();
         }
         catch (EstadioNaoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -85,6 +88,6 @@ public class EstadioController {
             @RequestParam(required = false) Boolean status,
             @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
     {
-            return estadioService.listarEstadio(nome, uf, status, pageable);
+        return estadioService.listarEstadio(nome, uf, status, pageable);
     }
 }

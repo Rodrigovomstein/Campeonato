@@ -26,9 +26,10 @@ public class ClubeService {
 
     public String cadastrarClube(ClubeRequestDTO clubeRequestDTO) {
         validarClube(clubeRequestDTO);
+        return "Clube " + clubeRequestDTO.getNome() + " cadastrado com sucesso!";
     }
 
-    public void validarClube(ClubeRequestDTO clubeRequestDTO) {
+    public String validarClube(ClubeRequestDTO clubeRequestDTO) {
         boolean jaExiste = clubeRepository
                 .findByNomeAndUfIgnoreCase(clubeRequestDTO.getNome(), clubeRequestDTO.getUf())
                 .isPresent();

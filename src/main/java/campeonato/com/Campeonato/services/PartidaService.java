@@ -10,6 +10,9 @@ import campeonato.com.Campeonato.repository.ClubeRepository;
 import campeonato.com.Campeonato.repository.PartidaRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +61,6 @@ public class PartidaService {
         return "Partida " + partida.getEstadio() + " cadastrada com sucesso!";
     }
 
-}
 
     public String atualizarPartida(Long id, PartidaRequestDto dto) {
         Partida partida = partidaRepository.findById(id)

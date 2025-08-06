@@ -21,7 +21,6 @@ public class JsonConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    // Producer para JSON
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -36,7 +35,6 @@ public class JsonConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    // Consumer para JSON
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         JsonDeserializer<Object> deserializer = new JsonDeserializer<>(Object.class);
@@ -46,7 +44,6 @@ public class JsonConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        // props.put(JsonDeserializer.TRUSTED_PACKAGES, "*"); // pode ser aqui também
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
 

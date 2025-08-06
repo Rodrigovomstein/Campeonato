@@ -31,4 +31,8 @@ public class EstadioRequestDto {
 
         @NotNull(message = "O status é obrigatório")
         private Boolean status;
+
+        public void setCep(@NotNull(message = "O CEP é obrigatório") String cep) {
+            this.cep = cep;
+        }
 }

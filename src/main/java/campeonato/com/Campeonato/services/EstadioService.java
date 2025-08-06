@@ -2,7 +2,6 @@ package campeonato.com.Campeonato.services;
 
 import campeonato.com.Campeonato.Specifications.EstadioSpecifications;
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
-import campeonato.com.Campeonato.dto.ViaCepDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.model.Estadio;
@@ -18,24 +17,15 @@ public class EstadioService {
 
     @Autowired
     private EstadioRepository estadioRepository;
-    private ViaCepService viaCepService;
+    private EstadioViaCepClient estadioViaCepClient;
 
 
     public String cadastrarEstadio(EstadioRequestDto estadioRequestDto) {
         validarEstadio(estadioRequestDto);
+        return "Estadio " + estadioRequestDto.getNome() + " cadastrado com sucesso!";
     }
 
-    @Autowired
-    private EstadioViaCepClient viaCepClient;
-
-    public String cadastrarEstadio(EstadioRequestDto dto) {
-        ViaCepDto.EnderecoResponse endereco = viaCepClient.buscarPorCep(dto.getCep());
-        if (endereco == null) {
-            throw new RuntimeException("Endereço não encontrado!");
-        }
-    }
-
-    public void validarEstadio(EstadioRequestDto estadioRequestDto) {
+    public String validarEstadio(EstadioRequestDto estadioRequestDto) {
         boolean jaExiste = estadioRepository
                 .findByNomeAndUfIgnoreCase(estadioRequestDto.getNome(), estadioRequestDto.getUf())
                 .isPresent();
@@ -104,7 +94,7 @@ public class EstadioService {
         return estadioRepository.findAll(spec, pageable);
     }
 
-    public Object listarEstadios(String flamengo, String rj, boolean eq, Pageable any) {
+    public Object listarEstadio(String nome, String uf, boolean equials, Pageable any) {
         return null;
     }
 }
