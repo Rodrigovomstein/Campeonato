@@ -6,8 +6,10 @@ import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.services.EstadioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import campeonato.com.Campeonato.dto.ViaCepDto;
 import campeonato.com.Campeonato.model.Estadio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,10 +18,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.LocalDate;
 import java.util.List;
-
+import campeonato.com.Campeonato.services.EstadioViaCepClient;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(EstadioController.class)
-class EstadioControllerTest {
+class EstadioControllerTest{
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,21 +37,44 @@ class EstadioControllerTest {
     @MockBean
     private EstadioService estadioService;
 
+    @MockBean
+    private EstadioViaCepClient estadioViaCepClient;
+
+    @BeforeEach
+    void setup() {
+        ViaCepDto enderecoMock = new ViaCepDto();
+        enderecoMock.setCep("12345-678");
+
+        Mockito.when(estadioViaCepClient.buscarEnderecoPorCep(Mockito.anyString()))
+                .thenReturn(enderecoMock);
+    }
+
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
     void cadastrarEstadio_comSucesso() throws Exception {
-        EstadioRequestDto dto = new EstadioRequestDto();
-        dto.setNome("Maracanã");
-        dto.setUf("RJ");
-        dto.setDataCriacao(java.time.LocalDate.of(1950, 6, 16));
-        dto.setStatus(true);
+        ViaCepDto enderecoMock = new ViaCepDto();
+        enderecoMock.setCep("12345-678");
+        enderecoMock.setLogradouro("Rua Exemplo");
+        enderecoMock.setBairro("Bairro");
+        enderecoMock.setLocalidade("Cidade");
+        enderecoMock.setUf("RJ");
+
+        Mockito.when(estadioViaCepClient.buscarEnderecoPorCep(any(String.class)))
+                .thenReturn(enderecoMock);
 
         Mockito.when(estadioService.cadastrarEstadio(any(EstadioRequestDto.class)))
                 .thenReturn("Estádio Maracanã cadastrado com sucesso!");
 
-        mockMvc.perform(post("/estadio")
+        EstadioRequestDto dto = new EstadioRequestDto();
+        dto.setNome("Maracanã");
+        dto.setUf("RJ");
+        dto.setDataCriacao(LocalDate.of(1950, 6, 16));
+        dto.setStatus(true);
+        dto.setCep("12345-678");
+
+        mockMvc.perform(post("/estadios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -59,16 +83,18 @@ class EstadioControllerTest {
 
     @Test
     void cadastrarEstadio_jaExiste() throws Exception {
+
         EstadioRequestDto dto = new EstadioRequestDto();
         dto.setNome("Maracanã");
         dto.setUf("RJ");
         dto.setDataCriacao(java.time.LocalDate.of(1950, 6, 16));
         dto.setStatus(true);
+        dto.setCep("12345-678");
 
         Mockito.when(estadioService.cadastrarEstadio(any(EstadioRequestDto.class)))
                 .thenThrow(new EstadioExisteException("Já existe um estádio com esse nome nesse estado."));
 
-        mockMvc.perform(post("/estadio")
+        mockMvc.perform(post("/estadios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isConflict())
@@ -82,11 +108,13 @@ class EstadioControllerTest {
         dto.setUf("RJ");
         dto.setDataCriacao(LocalDate.of(1950, 6, 16));
         dto.setStatus(true);
+        dto.setCep("12345-678");
 
         Mockito.when(estadioService.atualizarEstadio(eq(9L), any(EstadioRequestDto.class)))
                 .thenReturn("Estádio atualizado com sucesso!");
-
-        mockMvc.perform(put("/estadio/9")
+        Mockito.when(estadioViaCepClient.buscarCep(any(String.class)))
+                .thenReturn(new ViaCepDto("12345-678", "Rua Exemplo", "Bairro", "Cidade", "UF"));
+        mockMvc.perform(put("/estadios/9")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -95,16 +123,18 @@ class EstadioControllerTest {
 
     @Test
     void atualizarEstadio_jaExiste() throws Exception {
+
         EstadioRequestDto dto = new EstadioRequestDto();
         dto.setNome("Maracanã");
         dto.setUf("RJ");
         dto.setDataCriacao(LocalDate.of(1950, 6, 16));
         dto.setStatus(true);
+        dto.setCep("12345-678");
 
         Mockito.when(estadioService.atualizarEstadio(eq(9L), any(EstadioRequestDto.class)))
                 .thenThrow(new EstadioExisteException("Já existe um estádio com esse nome nesse estado."));
 
-        mockMvc.perform(put("/estadio/9")
+        mockMvc.perform(put("/estadios/9")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isConflict())
@@ -118,11 +148,12 @@ class EstadioControllerTest {
         dto.setUf("ES");
         dto.setDataCriacao(LocalDate.of(2000, 1, 1));
         dto.setStatus(false);
+        dto.setCep("12345-678");
 
         Mockito.when(estadioService.atualizarEstadio(eq(999L), any(EstadioRequestDto.class)))
                 .thenThrow(new EstadioNaoEncontradoException("Estádio não encontrado."));
 
-        mockMvc.perform(put("/estadio/999")
+        mockMvc.perform(put("/estadios/999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound())
@@ -133,7 +164,7 @@ class EstadioControllerTest {
         Long id = 10L;
         Mockito.doNothing().when(estadioService).inativarEstadio(id);
 
-        mockMvc.perform(delete("/estadio/{id}", id))
+        mockMvc.perform(delete("/estadios/{id}", id))
                 .andExpect(status().isNoContent());
     }
     @Test
@@ -142,7 +173,7 @@ class EstadioControllerTest {
         Mockito.doThrow(new EstadioNaoEncontradoException("Estádio não encontrado"))
                 .when(estadioService).inativarEstadio(id);
 
-        mockMvc.perform(delete("/estadio/{id}", id))
+        mockMvc.perform(delete("/estadios/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Estádio não encontrado")));
     }
@@ -154,10 +185,11 @@ class EstadioControllerTest {
         estadio.setNome("Pacaembu");
         estadio.setUf("SP");
         estadio.setStatus(true);
+        estadio.setCep("12345-678");
 
         Mockito.when(estadioService.buscarEstadioPorId(id)).thenReturn(estadio);
 
-        mockMvc.perform(get("/estadio/{id}", id))
+        mockMvc.perform(get("/estadios/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.nome").value("Pacaembu"))
@@ -170,7 +202,7 @@ class EstadioControllerTest {
         Mockito.when(estadioService.buscarEstadioPorId(id))
                 .thenThrow(new EstadioNaoEncontradoException("Estádio não encontrado"));
 
-        mockMvc.perform(get("/estadio/{id}", id))
+        mockMvc.perform(get("/estadios/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Estádio não encontrado")));
     }
@@ -182,7 +214,7 @@ class EstadioControllerTest {
         Mockito.when(estadioService.listarEstadio(any(), any(), any(), any()))
                 .thenReturn(new PageImpl<>(List.of(estadio1, estadio2), PageRequest.of(0, 2), 2));
 
-        mockMvc.perform(get("/estadio") // ajuste para seu endpoint
+        mockMvc.perform(get("/estadios") // ajuste para seu endpoint
                         .param("nome", "")
                         .param("uf", "")
                         .param("status", "true"))

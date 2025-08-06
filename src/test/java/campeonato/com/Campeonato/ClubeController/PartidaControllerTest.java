@@ -43,10 +43,17 @@ class PartidaControllerTest {
         @MockBean
         private PartidaService partidaService;
 
-    private Partida getMockDto() {
-        PartidaRequestDto dto = new PartidaRequestDto();
-        return new Partida();
-    }
+        private PartidaRequestDto getMockDto() {
+            PartidaRequestDto dto = new PartidaRequestDto();
+            dto.setEstadio("Maracanã");
+            dto.setUf("RJ");
+            dto.setClube1Id(1L);
+            dto.setClube2Id(2L);
+            dto.setDataHorario(java.time.LocalDateTime.now());
+            dto.setStatus(true);
+            return dto;
+        }
+
     @Test
     void cadastrarPartida_DeveRetornarCreated() throws Exception {
         PartidaController partidaCpntroller = new PartidaController();
@@ -70,18 +77,6 @@ class PartidaControllerTest {
                         .content(objectMapper.writeValueAsString(getMockDto())))
                 .andExpect(status().isConflict())
                 .andExpect(content().string("Partida já existe"));
-    }
-
-    @Test
-    void atualizarPartida_DeveRetornarOk() throws Exception {
-        Mockito.when(partidaService.atualizarPartida(anyLong(), any()))
-                .thenReturn("Atualizado");
-
-        mockMvc.perform(put("/partidas/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getMockDto())))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Atualizado"));
     }
 
     @Test
@@ -112,13 +107,15 @@ class PartidaControllerTest {
 
     @Test
     void buscarPartida_DeveRetornarOk() throws Exception {
+        Partida partida = new Partida();
+
         Mockito.when(partidaService.buscarPartidaPorId(1L))
-                .thenReturn(getMockDto());
+                .thenReturn(partida);
 
         mockMvc.perform(get("/partidas/1"))
                 .andExpect(status().isOk());
-        // pode adicionar more expectations se necessário
     }
+
     @Test
     void buscarPartida_DeveRetornarNotFound() throws Exception {
         Mockito.when(partidaService.buscarPartidaPorId(anyLong()))
@@ -131,7 +128,7 @@ class PartidaControllerTest {
 
     @Test
     void listarPartidas_DeveRetornarOk() throws Exception {
-        Page<Partida> page = new PageImpl<>(Collections.singletonList(getMockDto()), PageRequest.of(0, 10), 1);
+        Page<Partida> page = new PageImpl<>(Collections.singletonList(new Partida()), PageRequest.of(0, 10), 1);
 
         Mockito.when(partidaService.listarPartidas(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(page);

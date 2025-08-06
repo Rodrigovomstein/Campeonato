@@ -53,7 +53,7 @@ public class ClubeControllerTest<T> {
         Mockito.when(clubeService.listarClubes(eq("Flamengo"), eq("RJ"), eq(true), any(Pageable.class)))
                 .thenReturn(page);
 
-        mockMvc.perform(get("/clube")
+        mockMvc.perform(get("/clubes")
                         .param("nome", "Flamengo")
                         .param("uf", "RJ")
                         .param("status", "true")
@@ -77,7 +77,7 @@ public class ClubeControllerTest<T> {
 
         Mockito.when(clubeService.buscarClubePorId(5L)).thenReturn(clube);
 
-        mockMvc.perform(get("/clube/5"))
+        mockMvc.perform(get("/clubes/5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5))
                 .andExpect(jsonPath("$.nome").value("Vasco"))
@@ -98,7 +98,7 @@ public class ClubeControllerTest<T> {
         Mockito.when(clubeService.cadastrarClube(Mockito.any(ClubeRequestDTO.class)))
                 .thenReturn("Clube Vasco cadastrado com sucesso!");
 
-        mockMvc.perform(post("/clube")
+        mockMvc.perform(post("/clubes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -116,7 +116,7 @@ public class ClubeControllerTest<T> {
         Mockito.when(clubeService.cadastrarClube(Mockito.any(ClubeRequestDTO.class)))
                 .thenThrow(new ClubeExisteException("Já existe um clube com esse nome nesse estado."));
 
-        mockMvc.perform(post("/clube")
+        mockMvc.perform(post("/clubes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isConflict())
@@ -132,7 +132,7 @@ public class ClubeControllerTest<T> {
 
         Mockito.when(clubeService.buscarClubePorId(1L)).thenReturn(clube);
 
-        mockMvc.perform(get("/clube/1"))
+        mockMvc.perform(get("/clubes/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value("Flamengo"))
@@ -145,7 +145,7 @@ public class ClubeControllerTest<T> {
         Mockito.when(clubeService.buscarClubePorId(99L))
                 .thenThrow(new ClubeNaoEncontradoException("Clube não encontrado."));
 
-        mockMvc.perform(get("/clube/99"))
+        mockMvc.perform(get("/clubes/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Clube não encontrado."));
     }
@@ -162,7 +162,7 @@ public class ClubeControllerTest<T> {
         Mockito.when(clubeService.listarClubes("Vasco", "RJ", true, PageRequest.of(0, 10, Sort.by("id").ascending())))
                 .thenReturn(page);
 
-        mockMvc.perform(get("/clube")
+        mockMvc.perform(get("/clubes")
                         .param("nome", "Vasco")
                         .param("uf", "RJ")
                         .param("status", "true")

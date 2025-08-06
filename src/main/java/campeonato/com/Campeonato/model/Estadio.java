@@ -16,6 +16,9 @@ public class Estadio {
     @Column(name="estado")
     private String uf;
 
+    @Column(name="cep")
+    private String cep;
+
     @Column(name="data_criacao")
     private LocalDate dataCriacao;
     @Column(name="ativo")

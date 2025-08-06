@@ -33,4 +33,8 @@ public class EstadioViaCepClient {
             throw new RuntimeException("Erro ao consultar ViaCEP: " + e.getMessage());
         }
     }
+
+    public Object buscarCep(String any) {
+        return null;
+    }
 }
