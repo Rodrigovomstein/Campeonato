@@ -5,6 +5,7 @@ import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.model.Estadio;
 import campeonato.com.Campeonato.services.EstadioService;
+import campeonato.com.Campeonato.services.ViaCepService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +17,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/estadio")
+@RequestMapping("/estadios")
 public class EstadioController {
 
     @Autowired
     private EstadioService estadioService;
 
+    @Autowired
+    private ViaCepService viaCepService;
+
     @PostMapping
     public ResponseEntity<String> cadastrarEstadio(@RequestBody @Valid EstadioRequestDto estadioRequestDto) {
         try {
+            EnderecoResponse endereco = viaCepService.buscarEnderecoPorCep(estadioRequestDto.getCep());
+            estadioRequestDto.setCep(endereco.getCep());
+
             String mensagem = estadioService.cadastrarEstadio(estadioRequestDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         }

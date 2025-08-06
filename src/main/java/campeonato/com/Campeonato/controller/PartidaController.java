@@ -20,7 +20,7 @@ import java.time.LocalDate;
 
 @SuppressWarnings("ALL")
 @RestController
-@RequestMapping("/partida")
+@RequestMapping("/partidas")
 public class PartidaController {
 
     @Autowired

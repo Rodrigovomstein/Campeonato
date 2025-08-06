@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import campeonato.com.Campeonato.Specifications.ClubeSpecifications;
 import org.springframework.data.jpa.domain.Specification;
-import java.util.Optional;
 
 
 @Service
@@ -26,6 +25,10 @@ public class ClubeService {
 
 
     public String cadastrarClube(ClubeRequestDTO clubeRequestDTO) {
+        validarClube(clubeRequestDTO);
+    }
+
+    public void validarClube(ClubeRequestDTO clubeRequestDTO) {
         boolean jaExiste = clubeRepository
                 .findByNomeAndUfIgnoreCase(clubeRequestDTO.getNome(), clubeRequestDTO.getUf())
                 .isPresent();

@@ -8,13 +8,11 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Partida;
 import campeonato.com.Campeonato.repository.ClubeRepository;
 import campeonato.com.Campeonato.repository.PartidaRepository;
-import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -28,29 +26,27 @@ public class PartidaService {
     @Autowired
     private ClubeRepository clubeRepository;
 
+    public boolean isPartidaValida(PartidaRequestDto dto) {
+        if (dto.getGolsClube1() < 0 || dto.getGolsClube2() < 0) return false;
+        if (dto.getDataHorario().isAfter(LocalDateTime.now())) return false;
+        if (partidaRepository.findByEstadioAndUfIgnoreCase(dto.getEstadio(), dto.getUf()).isPresent()) return false;
+        return true;
+    }
+
+    public List<PartidaRequestDto> validarPartidas(List<PartidaRequestDto> partidas) {
+        return partidas.stream()
+                .filter(this::isPartidaValida)
+                .collect(Collectors.toList());
+    }
+
     public String cadastrarPartida(PartidaRequestDto partidaRequestDto) {
-        boolean jaExiste = partidaRepository
-                .findByEstadioAndUfIgnoreCase(partidaRequestDto.getEstadio(), partidaRequestDto.getUf())
-                .isPresent();
-
-        if (partidaRequestDto.getGolsClube1() < 0) {
-            throw new RuntimeException("Gols do clube 1 não podem ser negativos.");
+        if (!isPartidaValida(partidaRequestDto)) {
+            throw new RuntimeException("Partida inválida!");
         }
-        if (partidaRequestDto.getGolsClube2() < 0) {
-            throw new RuntimeException("Gols do clube 2 não podem ser negativos.");
-        }
-        if (partidaRequestDto.getDataHorario().isAfter(LocalDateTime.now())) {
-            throw new RuntimeException("Data da partida não pode ser no futuro.");
-        }
-        if (jaExiste) {
-            throw new PartidaExisteException("Já existe essa partida.");
-        }
-
         Clube clube1 = clubeRepository.findById(partidaRequestDto.getClube1Id())
                 .orElseThrow(() -> new RuntimeException("Clube 1 não encontrado!"));
         Clube clube2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
                 .orElseThrow(() -> new RuntimeException("Clube 2 não encontrado!"));
-
         Partida partida = new Partida();
         partida.setEstadio(partidaRequestDto.getEstadio());
         partida.setUf(partidaRequestDto.getUf());
@@ -58,10 +54,11 @@ public class PartidaService {
         partida.setStatus(partidaRequestDto.getStatus());
         partida.setClube1Id(clube1.getId());
         partida.setClube2Id(clube2.getId());
-
         partidaRepository.save(partida);
         return "Partida " + partida.getEstadio() + " cadastrada com sucesso!";
     }
+
+}
 
     public String atualizarPartida(Long id, PartidaRequestDto dto) {
         Partida partida = partidaRepository.findById(id)

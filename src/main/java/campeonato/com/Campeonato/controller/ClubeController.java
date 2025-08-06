@@ -7,23 +7,19 @@ import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.services.ClubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 
 
 
 
 @RestController
-@RequestMapping("/clube")
+@RequestMapping("/clubes")
 public class ClubeController {
 
     @Autowired

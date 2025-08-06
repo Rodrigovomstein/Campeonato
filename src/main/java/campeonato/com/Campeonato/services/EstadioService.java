@@ -1,28 +1,41 @@
 package campeonato.com.Campeonato.services;
 
-import campeonato.com.Campeonato.Specifications.ClubeSpecifications;
 import campeonato.com.Campeonato.Specifications.EstadioSpecifications;
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
+import campeonato.com.Campeonato.dto.ViaCepDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
-import campeonato.com.Campeonato.model.Clube;
 import campeonato.com.Campeonato.model.Estadio;
 import campeonato.com.Campeonato.repository.EstadioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class EstadioService {
 
     @Autowired
     private EstadioRepository estadioRepository;
+    private ViaCepService viaCepService;
+
 
     public String cadastrarEstadio(EstadioRequestDto estadioRequestDto) {
+        validarEstadio(estadioRequestDto);
+    }
+
+    @Autowired
+    private EstadioViaCepClient viaCepClient;
+
+    public String cadastrarEstadio(EstadioRequestDto dto) {
+        ViaCepDto.EnderecoResponse endereco = viaCepClient.buscarPorCep(dto.getCep());
+        if (endereco == null) {
+            throw new RuntimeException("Endereço não encontrado!");
+        }
+    }
+
+    public void validarEstadio(EstadioRequestDto estadioRequestDto) {
         boolean jaExiste = estadioRepository
                 .findByNomeAndUfIgnoreCase(estadioRequestDto.getNome(), estadioRequestDto.getUf())
                 .isPresent();

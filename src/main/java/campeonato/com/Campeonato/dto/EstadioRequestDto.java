@@ -19,6 +19,11 @@ public class EstadioRequestDto {
         )
         private String uf;
 
+        @NotNull(message = "O CEP é obrigatório")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#####-###")
+        private String cep;
+
+
         @PastOrPresent(message = "A data de criação não pode ser no futuro")
         @NotNull(message = "A data de criação é obrigatória")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
