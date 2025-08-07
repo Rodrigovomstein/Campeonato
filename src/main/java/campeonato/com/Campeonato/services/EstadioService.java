@@ -2,6 +2,7 @@ package campeonato.com.Campeonato.services;
 
 import campeonato.com.Campeonato.Specifications.EstadioSpecifications;
 import campeonato.com.Campeonato.dto.EstadioRequestDto;
+import campeonato.com.Campeonato.dto.ViaCepDto;
 import campeonato.com.Campeonato.exception.EstadioExisteException;
 import campeonato.com.Campeonato.exception.EstadioNaoEncontradoException;
 import campeonato.com.Campeonato.model.Estadio;
@@ -41,6 +42,7 @@ public class EstadioService {
         Estadio estadio = new Estadio();
         estadio.setNome(estadioRequestDto.getNome());
         estadio.setUf(estadioRequestDto.getUf());
+        estadio.setCep(estadioRequestDto.getCep());
         estadio.setDataCriacao(estadioRequestDto.getDataCriacao());
         estadio.setStatus(estadioRequestDto.getStatus());
 
@@ -61,6 +63,7 @@ public class EstadioService {
 
         estadio.setNome(dto.getNome());
         estadio.setUf(dto.getUf());
+        estadio.setCep(dto.getCep());
         estadio.setDataCriacao(dto.getDataCriacao());
         estadio.setStatus(dto.getStatus());
 

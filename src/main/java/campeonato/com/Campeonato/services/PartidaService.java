@@ -30,8 +30,10 @@ public class PartidaService {
     private ClubeRepository clubeRepository;
 
     public boolean isPartidaValida(PartidaRequestDto dto) {
-        if (dto.getGolsClube1() < 0 || dto.getGolsClube2() < 0) return false;
-        if (dto.getDataHorario().isAfter(LocalDateTime.now())) return false;
+        if (dto.getGolsClube1() != null && dto.getGolsClube1() < 0) return false;
+        if (dto.getGolsClube2() != null && dto.getGolsClube2() < 0) return false;
+        if (dto.getDataHorario() == null || dto.getDataHorario().isBefore(LocalDateTime.now())) return false;
+        if (dto.getEstadio() == null || dto.getUf() == null) return false;
         if (partidaRepository.findByEstadioAndUfIgnoreCase(dto.getEstadio(), dto.getUf()).isPresent()) return false;
         return true;
     }

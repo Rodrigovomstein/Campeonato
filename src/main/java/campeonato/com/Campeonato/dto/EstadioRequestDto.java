@@ -19,7 +19,7 @@ public class EstadioRequestDto {
         )
         private String uf;
 
-        @NotNull(message = "O CEP é obrigatório")
+        @NotBlank(message = "O CEP é obrigatório")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#####-###")
         private String cep;
 

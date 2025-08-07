@@ -9,13 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-
 public interface PartidaRepository extends JpaRepository<Partida, Long>, JpaSpecificationExecutor<Partida> {
 
     Optional<Partida> findByEstadioIgnoreCaseAndDataHorario(String estadio, LocalDateTime dataHorario);
 
-    Optional<Partida> findByEstadioAndUfIgnoreCase(@NotBlank(message = "Estádio é obrigatório") @Size(min = 2, message = "O nome do estádio deve ter pelo menos 2 caracteres") String estadio, @NotBlank(message = "UF é obrigatória") @Pattern(
-            regexp = "^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)$",
-            message = "UF inválida"
-    ) String uf);
+    Optional<Partida> findByEstadioAndUfIgnoreCase(String estadio, String uf);
 }

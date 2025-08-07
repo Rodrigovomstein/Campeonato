@@ -7,16 +7,23 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class ViaCepDto {
+    @JsonProperty("cep")
     private String cep;
+
+    @JsonProperty("logradouro")
     private String logradouro;
+
+    @JsonProperty("bairro")
     private String bairro;
+
+    @JsonProperty("localidade")
     private String localidade;
+
+    @JsonProperty("uf")
     private String uf;
 
-    // Construtor vazio
     public ViaCepDto() {}
 
-    // Construtor completo
     public ViaCepDto(String cep, String logradouro, String bairro, String localidade, String uf) {
         this.cep = cep;
         this.logradouro = logradouro;

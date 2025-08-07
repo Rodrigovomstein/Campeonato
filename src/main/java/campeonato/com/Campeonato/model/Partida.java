@@ -22,4 +22,8 @@ public class Partida {
 
     @Column(name = "ativo")
     private Boolean status;
+
+    private Integer golsClube1;
+    private Integer golsClube2;
+
 }
