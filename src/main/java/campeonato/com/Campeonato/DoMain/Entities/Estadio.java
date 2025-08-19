@@ -1,9 +1,15 @@
 package campeonato.com.Campeonato.DoMain.Entities;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
 
+@Entity
 public class Estadio {
 
+    @Id
     private Long id;
 
     private String nome;
@@ -12,6 +18,7 @@ public class Estadio {
 
     private String cep;
 
+    @Column(name = "data_criacao")
     private LocalDate dataCriacao;
 
     private Boolean status;

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import campeonato.com.Campeonato.DoMain.Entities.Clubes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class PartidaService<Clubes> {
+public class PartidaService{
 
     @Autowired
     private PartidaRepository partidaRepository;
@@ -49,17 +49,18 @@ public class PartidaService<Clubes> {
         if (!isPartidaValida(partidaRequestDto)) {
             throw new RuntimeException("Partida inválida!");
         }
-        Clubes clubes1 = (Clubes) clubeRepository.findById(partidaRequestDto.getClube1Id())
+        Clubes clube1 = clubeRepository.findById(partidaRequestDto.getClube1Id())
                 .orElseThrow(() -> new RuntimeException("Clube 1 não encontrado!"));
-        Clubes clubes2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
+        Clubes clube2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
                 .orElseThrow(() -> new RuntimeException("Clube 2 não encontrado!"));
+
         Partida partida = new Partida();
         partida.setEstadio(partidaRequestDto.getEstadio());
         partida.setUf(partidaRequestDto.getUf());
         partida.setDataHorario(partidaRequestDto.getDataHorario());
         partida.setStatus(partidaRequestDto.getStatus());
-        partida.setClube1Id(clubes1.getId());
-        partida.setClube2Id(clubes2.getId());
+        partida.setClubes1Id(clube1.getId());
+        partida.setClubes2Id(clube2.getId());
         partidaRepository.save(partida);
         return "Partida " + partida.getEstadio() + " cadastrada com sucesso!";
     }

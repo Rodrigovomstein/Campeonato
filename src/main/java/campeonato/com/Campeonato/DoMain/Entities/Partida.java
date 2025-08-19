@@ -1,18 +1,23 @@
 package campeonato.com.Campeonato.DoMain.Entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Partida {
 
+    @Id
     private Long id;
 
     private String estadio;
 
     private String uf;
 
-    private Long clube1Id;
+    private Long clubes1Id;
 
-    private Long clube2Id;
+    private Long clubes2Id;
 
     private LocalDateTime dataHorario;
 
@@ -25,12 +30,12 @@ public class Partida {
     public Partida() {
     }
 
-    public Partida(Long id, String estadio, String uf, Long clube1Id, Long clube2Id, LocalDateTime dataHorario, Boolean status, Integer golsClube1, Integer golsClube2) {
+    public Partida(Long id, String estadio, String uf, Long clubes1Id, Long clubes2Id, LocalDateTime dataHorario, Boolean status, Integer golsClube1, Integer golsClube2) {
         this.id = id;
         this.estadio = estadio;
         this.uf = uf;
-        this.clube1Id = clube1Id;
-        this.clube2Id = clube2Id;
+        this.clubes1Id = clubes1Id;
+        this.clubes2Id = clubes2Id;
         this.dataHorario = dataHorario;
         this.status = status;
         this.golsClube1 = golsClube1;
@@ -61,20 +66,20 @@ public class Partida {
         this.uf = uf;
     }
 
-    public Long getClube1Id() {
-        return clube1Id;
+    public Long getClubes1Id() {
+        return clubes1Id;
     }
 
-    public void setClube1Id(Long clube1Id) {
-        this.clube1Id = clube1Id;
+    public void setClubes1Id(Long clubes1Id) {
+        this.clubes1Id = clubes1Id;
     }
 
-    public Long getClube2Id() {
-        return clube2Id;
+    public Long getClubes2Id() {
+        return clubes2Id;
     }
 
-    public void setClube2Id(Long clube2Id) {
-        this.clube2Id = clube2Id;
+    public void setClubes2Id(Long clubes2Id) {
+        this.clubes2Id = clubes2Id;
     }
 
     public LocalDateTime getDataHorario() {

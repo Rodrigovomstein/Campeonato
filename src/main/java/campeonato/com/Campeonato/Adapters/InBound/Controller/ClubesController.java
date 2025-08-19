@@ -43,7 +43,7 @@ public class ClubesController {
             @PathVariable Long id,
             @RequestBody @Valid ClubesRequestDTO clubesRequestDTO) {
         try {
-            String mensagem = clubesService.atualizarClubes(id, clubesRequestDTO);
+            String mensagem = clubeService.atualizarClubes(id, clubesRequestDTO);
             return ResponseEntity.ok(mensagem);
         }
         catch (ClubesExisteException ex) {
@@ -57,8 +57,7 @@ public class ClubesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> inativarClubes(@PathVariable Long id) {
         try {
-            ClubesController clubesService;
-            String mensagem = clubesService.inativarClubes(id);
+            String mensagem = clubeService.inativarClubes(id);
             return ResponseEntity.ok(mensagem);
         }
         catch (ClubesNaoEncontradoException ex) {
@@ -67,12 +66,16 @@ public class ClubesController {
     }
 
     @GetMapping("/{id}")
-    public Clubes buscarClubesPorId(Long id) {
-        SimpleJpaRepository<T, Long> jpaClubesRepository;
-        return jpaClubesRepository.findById(id)
-                .orElseThrow(() -> new ClubesNaoEncontradoException("Clube não encontrado!"));
+    public ResponseEntity<Clubes> buscarClubesPorId(@PathVariable Long id) {
+        try {
+            Clubes clube = clubeService.buscarClubesPorId(id)
+                    .orElseThrow();
+            return ResponseEntity.ok(clube);
+        } catch (ClubesNaoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
-    
+
     @GetMapping
     public Page<Clubes> listarClubes(
             @RequestParam(required = false) String nome,
@@ -80,7 +83,7 @@ public class ClubesController {
             @RequestParam(required = false) Boolean status,
             @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
     {
-        return clubesService.listarClubes(nome, uf, status, pageable);
+        return clubeService.listarClubes(nome, uf, status, pageable);
     }
 
 }

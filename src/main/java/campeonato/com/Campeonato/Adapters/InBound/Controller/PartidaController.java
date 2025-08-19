@@ -1,6 +1,7 @@
 package campeonato.com.Campeonato.Adapters.InBound.Controller;
 
 import campeonato.com.Campeonato.Adapters.InBound.Dto.PartidaRequestDto;
+import campeonato.com.Campeonato.Application.Services.PartidaService;
 import campeonato.com.Campeonato.DoMain.Exception.PartidaExisteException;
 import campeonato.com.Campeonato.DoMain.Exception.PartidaNaoEncontradaException;
 import campeonato.com.Campeonato.DoMain.Entities.Partida;

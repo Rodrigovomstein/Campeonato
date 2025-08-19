@@ -111,6 +111,10 @@ public class ClubesService {
                 .and(ClubesSpecifications.statusIgual(Boolean.TRUE));
         return jpaClubesRepository.findAll(spec);
     }
+
+    public String inativarClubes(Long id) {
+        return null;
+    }
 }
 
 
