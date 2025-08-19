@@ -4,12 +4,12 @@ import campeonato.com.Campeonato.Adapters.InBound.Dto.ClubesRequestDTO;
 import campeonato.com.Campeonato.DoMain.Entities.Clubes;
 import campeonato.com.Campeonato.DoMain.Exception.ClubesExisteException;
 import campeonato.com.Campeonato.DoMain.Exception.ClubesNaoEncontradoException;
-import campeonato.com.Campeonato.DoMain.Model.Clube;
 import campeonato.com.Campeonato.Application.Services.ClubesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +25,7 @@ public class ClubesController {
 
     @Autowired
     private ClubesService clubeService;
+    private Object jpaClubesRepository;
 
     @PostMapping
     public ResponseEntity<String> cadastrarClubes(@RequestBody @Valid ClubesRequestDTO clubesRequestDTO) {
@@ -56,8 +57,9 @@ public class ClubesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> inativarClubes(@PathVariable Long id) {
         try {
-            clubesService.inativarClube(id);
-            return ResponseEntity.noContent().build(); // 204, sem body
+            ClubesController clubesService;
+            String mensagem = clubesService.inativarClubes(id);
+            return ResponseEntity.ok(mensagem);
         }
         catch (ClubesNaoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -65,16 +67,12 @@ public class ClubesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarClubes(@PathVariable Long id) {
-        try {
-            Clubes clubes = clubesService.buscarClubePorId(id);
-            return ResponseEntity.ok(clubes);
-        }
-        catch (ClubesNaoEncontradoException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
+    public Clubes buscarClubesPorId(Long id) {
+        SimpleJpaRepository<T, Long> jpaClubesRepository;
+        return jpaClubesRepository.findById(id)
+                .orElseThrow(() -> new ClubesNaoEncontradoException("Clube não encontrado!"));
     }
-
+    
     @GetMapping
     public Page<Clubes> listarClubes(
             @RequestParam(required = false) String nome,

@@ -4,7 +4,7 @@ import campeonato.com.Campeonato.Adapters.InBound.Dto.EstadioRequestDto;
 import campeonato.com.Campeonato.Adapters.InBound.Dto.ViaCepDto;
 import campeonato.com.Campeonato.DoMain.Exception.EstadioExisteException;
 import campeonato.com.Campeonato.DoMain.Exception.EstadioNaoEncontradoException;
-import campeonato.com.Campeonato.DoMain.Model.Estadio;
+import campeonato.com.Campeonato.DoMain.Entities.Estadio;
 import campeonato.com.Campeonato.Application.Services.EstadioService;
 import campeonato.com.Campeonato.Application.Services.EstadioViaCepClient;
 import jakarta.validation.Valid;

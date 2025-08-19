@@ -1,4 +1,4 @@
-package campeonato.com.Campeonato.DoMain.Model;
+package campeonato.com.Campeonato.DoMain.Entities;
 
 import java.time.LocalDateTime;
 

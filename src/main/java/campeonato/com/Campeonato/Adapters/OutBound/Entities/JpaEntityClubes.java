@@ -26,7 +26,7 @@ public class JpaEntityClubes {
 
     public JpaEntityClubes() {}
 
-    public JpaEntityClubes(campeonato.com.Campeonato.DoMain.Model.Clubes clubes) {
+    public JpaEntityClubes(campeonato.com.Campeonato.DoMain.Entities.Clubes clubes) {
         this.id = clubes.getId();
         this.nome = clubes.getNome();
         this.uf = clubes.getUf();

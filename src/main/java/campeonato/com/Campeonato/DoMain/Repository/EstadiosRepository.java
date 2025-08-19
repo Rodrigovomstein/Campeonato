@@ -1,6 +1,6 @@
 package campeonato.com.Campeonato.DoMain.Repository;
 
-import campeonato.com.Campeonato.DoMain.Model.Estadio;
+import campeonato.com.Campeonato.DoMain.Entities.Estadio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

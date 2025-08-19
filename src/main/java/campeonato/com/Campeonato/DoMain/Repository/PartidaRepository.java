@@ -1,6 +1,6 @@
 package campeonato.com.Campeonato.DoMain.Repository;
 
-import campeonato.com.Campeonato.DoMain.Model.Partida;
+import campeonato.com.Campeonato.DoMain.Entities.Partida;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;

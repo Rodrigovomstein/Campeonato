@@ -1,6 +1,6 @@
 package campeonato.com.Campeonato.DoMain.Specifications;
 
-import campeonato.com.Campeonato.DoMain.Model.Estadio;
+import campeonato.com.Campeonato.DoMain.Entities.Estadio;
 import org.springframework.data.jpa.domain.Specification;
 
 public class EstadioSpecifications {

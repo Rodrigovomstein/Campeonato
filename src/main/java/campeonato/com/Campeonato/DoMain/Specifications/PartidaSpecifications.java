@@ -1,6 +1,6 @@
 package campeonato.com.Campeonato.DoMain.Specifications;
 
-import campeonato.com.Campeonato.DoMain.Model.Partida;
+import campeonato.com.Campeonato.DoMain.Entities.Partida;
 import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 

@@ -1,12 +1,11 @@
 package campeonato.com.Campeonato.Application.Services;
 
+import campeonato.com.Campeonato.Adapters.OutBound.Repository.JpaClubesRepository;
 import campeonato.com.Campeonato.DoMain.Specifications.PartidaSpecifications;
 import campeonato.com.Campeonato.Adapters.InBound.Dto.PartidaRequestDto;
 import campeonato.com.Campeonato.DoMain.Exception.PartidaExisteException;
 import campeonato.com.Campeonato.DoMain.Exception.PartidaNaoEncontradaException;
-import campeonato.com.Campeonato.DoMain.Model.Clube;
-import campeonato.com.Campeonato.DoMain.Model.Partida;
-import campeonato.com.Campeonato.DoMain.Repository.JpaClubesRepository;
+import campeonato.com.Campeonato.DoMain.Entities.Partida;
 import campeonato.com.Campeonato.DoMain.Repository.PartidaRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class PartidaService {
+public class PartidaService<Clubes> {
 
     @Autowired
     private PartidaRepository partidaRepository;
@@ -34,7 +33,7 @@ public class PartidaService {
         if (dto.getGolsClube2() != null && dto.getGolsClube2() < 0) return false;
         if (dto.getDataHorario() == null || dto.getDataHorario().isBefore(LocalDateTime.now())) return false;
         if (dto.getEstadio() == null || dto.getUf() == null) return false;
-        // Verifica se já existe partida igual
+
         List<Partida> partidas = partidaRepository.findByEstadioIgnoreCaseAndUfIgnoreCase(dto.getEstadio(), dto.getUf());
         if (!partidas.isEmpty()) return false;
         return true;
@@ -50,17 +49,17 @@ public class PartidaService {
         if (!isPartidaValida(partidaRequestDto)) {
             throw new RuntimeException("Partida inválida!");
         }
-        Clube clube1 = clubeRepository.findById(partidaRequestDto.getClube1Id())
+        Clubes clubes1 = (Clubes) clubeRepository.findById(partidaRequestDto.getClube1Id())
                 .orElseThrow(() -> new RuntimeException("Clube 1 não encontrado!"));
-        Clube clube2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
+        Clubes clubes2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
                 .orElseThrow(() -> new RuntimeException("Clube 2 não encontrado!"));
         Partida partida = new Partida();
         partida.setEstadio(partidaRequestDto.getEstadio());
         partida.setUf(partidaRequestDto.getUf());
         partida.setDataHorario(partidaRequestDto.getDataHorario());
         partida.setStatus(partidaRequestDto.getStatus());
-        partida.setClube1Id(clube1.getId());
-        partida.setClube2Id(clube2.getId());
+        partida.setClube1Id(clubes1.getId());
+        partida.setClube2Id(clubes2.getId());
         partidaRepository.save(partida);
         return "Partida " + partida.getEstadio() + " cadastrada com sucesso!";
     }

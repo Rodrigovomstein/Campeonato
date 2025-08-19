@@ -4,14 +4,15 @@ import campeonato.com.Campeonato.Adapters.InBound.Dto.ClubesRequestDTO;
 import campeonato.com.Campeonato.DoMain.Entities.Clubes;
 import campeonato.com.Campeonato.DoMain.Exception.ClubesExisteException;
 import campeonato.com.Campeonato.DoMain.Exception.ClubesNaoEncontradoException;
-import campeonato.com.Campeonato.DoMain.Model.Clube;
-import campeonato.com.Campeonato.DoMain.Repository.JpaClubesRepository;
+import campeonato.com.Campeonato.Adapters.OutBound.Repository.JpaClubesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import campeonato.com.Campeonato.DoMain.Specifications.ClubesSpecifications;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Optional;
 
 
 @Service
@@ -80,7 +81,7 @@ public class ClubesService {
 
     public void inativarClube(Long id) throws Throwable {
         Clubes clubes = (Clubes) jpaClubesRepository.findById(id)
-                .orElseThrow()-> new ClubesNaoEncontradoException;
+                .orElseThrow(()-> new ClubesNaoEncontradoException("Clube não encontrado!"));
 
 
         if (!Boolean.FALSE.equals(clubes.getStatus())) {
@@ -89,14 +90,12 @@ public class ClubesService {
         }
     }
 
-    public Clubes buscarClubesPorId(Long id) {
-        try {
-            return jpaClubesRepository.findById(id)
-                    .orElseThrow(() ->
-                    new ClubesNaoEncontradoException("Clube não encontrado!"));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+    public Optional<Clubes> buscarClubesPorId(Long id) {
+        Optional<Clubes> clubes = jpaClubesRepository.findById(id);
+        if (clubes.isEmpty()) {
+            throw new ClubesNaoEncontradoException("Clube não encontrado!");
         }
+        return clubes;
     }
 
     public Page<Clubes> listarClubes(String nome, String uf, Boolean status, Pageable pageable) {
