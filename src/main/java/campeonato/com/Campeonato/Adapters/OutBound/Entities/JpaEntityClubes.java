@@ -34,5 +34,18 @@ public class JpaEntityClubes {
         this.status = clubes.getStatus();
     }
 
+    public campeonato.com.Campeonato.DoMain.Entities.Clubes toDomain() {
+        return new campeonato.com.Campeonato.DoMain.Entities.Clubes(
+                this.id,
+                this.nome,
+                this.uf,
+                this.dataCriacao,
+                this.status
+        );
+    }
 
+    public static JpaEntityClubes fromDomain(campeonato.com.Campeonato.DoMain.Entities.Clubes clubes) {
+        return new JpaEntityClubes(clubes);
+    }
+    
 }
