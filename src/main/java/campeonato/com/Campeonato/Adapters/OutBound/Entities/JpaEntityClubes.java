@@ -47,5 +47,5 @@ public class JpaEntityClubes {
     public static JpaEntityClubes fromDomain(campeonato.com.Campeonato.DoMain.Entities.Clubes clubes) {
         return new JpaEntityClubes(clubes);
     }
-    
+
 }
