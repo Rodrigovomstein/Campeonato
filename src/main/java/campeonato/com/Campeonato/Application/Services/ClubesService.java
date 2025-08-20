@@ -56,11 +56,13 @@ public class ClubesService {
     }
 
     public String atualizarClubes(Long id, ClubesRequestDTO dto) {
+
         Clubes clubes = null;
         try {
             clubes = (Clubes) jpaClubesRepository.findById(id)
                     .orElseThrow(() -> new ClubesNaoEncontradoException("Clube não encontrado!"));
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             throw new RuntimeException(e);
         }
 
