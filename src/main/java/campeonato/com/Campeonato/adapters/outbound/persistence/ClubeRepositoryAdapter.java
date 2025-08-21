@@ -21,14 +21,9 @@ public class ClubeRepositoryAdapter implements ClubeRepositoryPort {
 
     @Override
     public Clube salvar(Clube clube) {
-        JpaEntityClube jpaEntity = JpaEntityClubefromDomain(clube);
+        JpaEntityClube jpaEntity = JpaEntityClube.fromDomain(clube);
         JpaEntityClube savedEntity = jpaClubeRepository.save(jpaEntity);
         return savedEntity.toDomain();
-    }
-
-    private JpaEntityClube JpaEntityClubefromDomain(Clube clube) {
-
-        return JpaEntityClube.fromDomain(clube);
     }
 
     @Override

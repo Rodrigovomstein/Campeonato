@@ -50,9 +50,11 @@ public class PartidaUseCaseImpl {
             throw new RuntimeException("Partida inválida!");
         }
         Clube clube1 = clubeRepository.findById(partidaRequestDto.getClube1Id())
-                .orElseThrow(() -> new RuntimeException("Clube 1 não encontrado!")).toDomain();
+                .map(jpaEntity -> jpaEntity.toDomain())
+                .orElseThrow(() -> new RuntimeException("Clube 1 não encontrado!"));
         Clube clube2 = clubeRepository.findById(partidaRequestDto.getClube2Id())
-                .orElseThrow(() -> new RuntimeException("Clube 2 não encontrado!")).toDomain();
+                .map(jpaEntity -> jpaEntity.toDomain())
+                .orElseThrow(() -> new RuntimeException("Clube 2 não encontrado!"));
 
         Partida partida = new Partida();
         partida.setEstadio(partidaRequestDto.getEstadio());
