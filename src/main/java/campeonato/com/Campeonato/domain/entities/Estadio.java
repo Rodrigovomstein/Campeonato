@@ -1,85 +1,135 @@
 package campeonato.com.Campeonato.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
+import campeonato.com.Campeonato.domain.valueobjects.Endereco;
 import java.time.LocalDate;
+import java.util.Objects;
 
-@Entity
 public class Estadio {
 
-    @Id
     private Long id;
-
     private String nome;
-
-    private String uf;
-
-    private String cep;
-
-    @Column(name = "data_criacao")
+    private Endereco endereco;
     private LocalDate dataCriacao;
+    private Boolean ativo;
 
-    private Boolean status;
-
-    public Estadio () {
+    public Estadio(String nome, Endereco endereco) {
+        this.id = id;
+        this.nome = validarNome(nome);
+        this.endereco = validarEndereco(endereco);
+        this.dataCriacao = validarDataCriacao(dataCriacao);
+        this.ativo = ativo != null ? ativo : true;
     }
 
-    public Estadio(Long id, String nome, String uf, String cep, LocalDate dataCriacao, Boolean status) {
-        this.id = id;
-        this.nome = nome;
-        this.uf = uf;
-        this.cep = cep;
-        this.dataCriacao = dataCriacao;
-        this.status = status;
+    public Estadio(String nome, Endereco endereco, LocalDate dataCriacao) {
+        this(nome, endereco);
+    }
+
+    // Construtor para compatibilidade com versão anterior (será removido gradualmente)
+    public Estadio(Long id, String nome, String uf, LocalDate dataCriacao, Boolean ativo) {
+        this(nome, new Endereco("00000-000", uf));
+    }
+
+    private String validarNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do estadio não pode ser vazio");
+        }
+        if (nome.length() > 100) {
+            throw new IllegalArgumentException("Nome do estadio não pode ter mais de 100 caracteres");
+        }
+        return nome.trim();
+    }
+
+    private Endereco validarEndereco(Endereco endereco) {
+        if (endereco == null) {
+            throw new IllegalArgumentException("Endereço não pode ser nulo");
+        }
+        return endereco;
+    }
+
+    private LocalDate validarDataCriacao(LocalDate dataCriacao) {
+        if (dataCriacao == null) {
+            throw new IllegalArgumentException("Data de criação não pode ser nula");
+        }
+        if (dataCriacao.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Data de criação não pode ser futura");
+        }
+        return dataCriacao;
+    }
+
+    public Estadio inativar() {
+        return new Estadio(this.nome, this.endereco);
+    }
+
+    public Estadio ativar() {
+        return new Estadio(this.nome, this.endereco);
+    }
+
+    public Estadio atualizar(String novoNome, Endereco novoEndereco, LocalDate novaDataCriacao) {
+        return new Estadio(novoNome, novoEndereco);
+    }
+
+    public Estadio atualizarEndereco(Endereco novoEndereco) {
+        return new Estadio(this.nome, novoEndereco);
+    }
+
+    public boolean isAtivo() {
+        return Boolean.TRUE.equals(this.ativo);
+    }
+
+    public boolean isEnderecoCompleto() {
+        return endereco.isCompleto();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
+    // Métodos de compatibilidade (serão removidos gradualmente)
     public String getUf() {
-        return uf;
-    }
-
-    public void setUf(String uf) {
-        this.uf = uf;
+        return endereco.getUf();
     }
 
     public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
+        return endereco.getCep();
     }
 
     public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public Boolean getAtivo() {
+        return ativo;
     }
 
-    public Boolean getStatus() {
-        return status;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Estadio estadio = (Estadio) o;
+        return Objects.equals(id, estadio.id);
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Estadio{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", endereco=" + endereco +
+                ", dataCriacao=" + dataCriacao +
+                ", ativo=" + ativo +
+                '}';
     }
 }
